@@ -1,8 +1,8 @@
 package resp
 
 import (
-		"io"
-    "bufio"
+	"io"
+  "bufio"
 )
 
 // RESP protocol supported types

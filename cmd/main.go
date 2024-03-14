@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/theBeginner86/hippocampus/resp"
+	"github.com/thebeginner86/hippocampus/resp"
 )
 
 func main() {
