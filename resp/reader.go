@@ -70,15 +70,15 @@ func (r *Resp) readArray() (Value, error){
 	if err != nil {
 		return val, err
 	}
-
-	val.Array = make([]Value, len)
+	arr := make([]Value, 0)
 	for i:=0; i<len; i++ {
 		val, err := r.Read()
 		if err != nil {
 			return val, err
 		}
-		val.Array = append(val.Array, val)
+		arr = append(arr, val)
 	}
+		val.Array = arr
 	return val, nil
 }
 
@@ -87,7 +87,7 @@ func (r *Resp) readArray() (Value, error){
 // based on the type it delegates the requests to the requested handler
 func (r *Resp) Read() (Value, error) {
 	typ, err := r.reader.ReadByte()
-	if err !=nil {
+	if err != nil {
 		return Value{}, err
 	}
 
