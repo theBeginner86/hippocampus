@@ -17,11 +17,11 @@ const (
 // represents a RESP value
 // used for serializing/deserializing RESP cmds
 type Value struct {
-  typ string
-  str string
-  num int
-  bulk string
-  array []Value
+  Type string
+  String string
+  Number int
+  Bulk string
+  Array []Value
 }
 
 type Resp struct {
