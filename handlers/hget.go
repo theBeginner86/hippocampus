@@ -6,7 +6,7 @@ import (
 
 func hget(args []resp.Value) resp.Value {
 	if len(args) != 2 {
-		return resp.Value{Type: "error", String: "ErrError: Invalid number of arguments for 'hget' command. Must be 2 argumentor"}
+		return resp.Value{Type: "error", String: "Error: Invalid number of arguments for 'hget' command. Must be 2 argumentor"}
 	}
 
 	hash := args[0].Bulk
