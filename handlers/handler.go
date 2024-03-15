@@ -31,5 +31,6 @@ var Handlers = map[string]func([]resp.Value) resp.Value {
 	"SET": set,
 	"HGET": hget,
 	"HSET": hset,
+	"HGETALL": hgetall,
 }
 
