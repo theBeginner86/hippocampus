@@ -10,8 +10,7 @@ import (
 func main() {
 	fmt.Println("Listening on port :6379")
 
-	// Create a new server
-	// this is a tcp listener
+	// Create a new server of type tcp listener
 	l, err := net.Listen("tcp", ":6379")
 	if err != nil {
 		fmt.Println(err)
@@ -33,9 +32,9 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(value)
-
-		// ignore request and return back a PONG
-		conn.Write([]byte("+OK\r\n"))
+		
+		_ = value
+		writer := resp.NewWriter(conn)
+		writer.Write(resp.Value{Type: "string", String: "OK"})
 	}
 }
