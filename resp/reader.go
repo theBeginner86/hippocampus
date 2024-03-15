@@ -45,7 +45,7 @@ func (r *Resp) readInteger() (integer int, length int, err error){
 
 func (r *Resp) readBulk() (Value, error){
 	val := Value{
-		typ: "bulk",
+		Type: "bulk",
 	}
 	len, _, err := r.readInteger()
 	if err != nil {
@@ -53,7 +53,7 @@ func (r *Resp) readBulk() (Value, error){
 	}
 	bulk := make([]byte, len)
 	r.reader.Read(bulk)
-	val.bulk = string(bulk)
+	val.Bulk = string(bulk)
 	
 	r.readLine() // read trailing CRLF
 
@@ -63,7 +63,7 @@ func (r *Resp) readBulk() (Value, error){
 // readArray() is the handler for reading an array from the reader
 func (r *Resp) readArray() (Value, error){
 	val := Value{
-		typ: "array",
+		Type: "array",
 	}
 
 	len, _, err := r.readInteger()
@@ -71,13 +71,13 @@ func (r *Resp) readArray() (Value, error){
 		return val, err
 	}
 
-	val.array = make([]Value, len)
+	val.Array = make([]Value, len)
 	for i:=0; i<len; i++ {
 		val, err := r.Read()
 		if err != nil {
 			return val, err
 		}
-		val.array = append(val.array, val)
+		val.Array = append(val.Array, val)
 	}
 	return val, nil
 }
