@@ -21,6 +21,7 @@ import (
 
 	"github.com/thebeginner86/hippocampus/handlers"
 	"github.com/thebeginner86/hippocampus/resp"
+	"github.com/thebeginner86/hippocampus/persistance/aof"
 )
 
 func main() {
@@ -32,6 +33,27 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	aofH, err := aof.NewAof("database.aof")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer aofH.Close()
+
+	aofH.Read(func(value resp.Value) {
+		cmd := strings.ToUpper(value.Array[0].Bulk)
+		args := value.Array[1:]
+
+		handler, ok := handlers.Handlers[cmd]
+		if !ok {
+			fmt.Println("Invalid command: ", cmd)
+			return
+		}
+
+		handler(args)
+	})
+
 
 	// Listen for connections
 	conn, err := l.Accept()
@@ -59,7 +81,7 @@ func main() {
 			continue
 		}
 
-		// we fetch the first element of the array and convert to uppercase
+		// fetches the first element of the array and convert to uppercase
 		// this ensures that the cmds matches properly with our defined standards
 		command := strings.ToUpper(value.Array[0].Bulk)
 
@@ -73,6 +95,10 @@ func main() {
 			fmt.Println("Invalid command: ", command)
 			writer.Write(resp.Value{Type: "string", String: ""})
 			continue
+		}
+
+		if command == "SET" || command == "HSET" {
+			aofH.Write(value)
 		}
 
 		result := handler(args)
