@@ -5,4 +5,4 @@ This is database engine.
 
 <hr>
 
-Developed by [Pranav Singh](https://www.twitter.com/thebeginer86)
+Developed by [Pranav Singh](https://www.twitter.com/thebeginner86)
