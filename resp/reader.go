@@ -31,7 +31,7 @@ func (r *Resp) readLine() (line []byte, length int, err error) {
 		length++
 		line = append(line, byt)
 		// its should be greater than 2 because first 2 bytes are type and length
-		// this would be true when we are adding \n to line, that is, the last byte
+		// this would be true when adding \n to line, that is, the last byte
 		// at that point second last character would be \r
 		if len(line) >= 2 && line[len(line)-2] == '\r' {
 			break
