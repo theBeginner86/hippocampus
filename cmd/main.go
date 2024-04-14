@@ -34,6 +34,7 @@ func main() {
 		return
 	}
 
+	// TODO: change it to hidden folder
 	aofH, err := aof.NewAof("database.aof")
 	if err != nil {
 		fmt.Println(err)
