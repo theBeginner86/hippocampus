@@ -18,7 +18,7 @@ import (
 	"github.com/thebeginner86/hippocampus/resp"
 )
 
-func hgetall(args []resp.Value) resp.Value {
+func hgetAll(args []resp.Value) resp.Value {
 	if len(args) != 1 {
 		return resp.Value{Type: "error", String: "Error: Invalid number of arguments for 'hgetall' command. Must be 1 argumentor"}
 	}

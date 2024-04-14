@@ -98,7 +98,11 @@ func main() {
 			continue
 		}
 
-		if command == "SET" || command == "HSET" {
+		if 
+		command == "SET" || 
+		command == "HSET" || 
+		(command == "CONFIG" && len(args) > 0 &&
+		 strings.ToUpper(args[0].Bulk) == "SET"){
 			aofH.Write(value)
 		}
 
