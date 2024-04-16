@@ -16,7 +16,6 @@ package handlers
 
 import (
 	"strings"
-	"fmt"
 
 	"github.com/thebeginner86/hippocampus/resp"
 )
@@ -73,8 +72,6 @@ func setConfig(args []resp.Value) resp.Value {
 	CONFIGMutex.RLock()	
 	CONFIG[entity] = value
 	CONFIGMutex.RUnlock()
-
-	fmt.Printf("CONFIG: %v\n", CONFIG)
 
 	return resp.Value{Type: "string", String: "OK"}
 }
