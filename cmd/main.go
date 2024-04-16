@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/thebeginner86/hippocampus/handlers"
-	"github.com/thebeginner86/hippocampus/resp"
 	"github.com/thebeginner86/hippocampus/persistance/aof"
+	"github.com/thebeginner86/hippocampus/resp"
 )
 
 func main() {
@@ -54,7 +54,6 @@ func main() {
 
 		handler(args)
 	})
-
 
 	// Listen for connections
 	conn, err := l.Accept()
@@ -98,11 +97,10 @@ func main() {
 			continue
 		}
 
-		if 
-		command == "SET" || 
-		command == "HSET" || 
-		(command == "CONFIG" && len(args) > 0 &&
-		 strings.ToUpper(args[0].Bulk) == "SET"){
+		if command == "SET" ||
+			command == "HSET" ||
+			(command == "CONFIG" && len(args) > 0 &&
+				strings.ToUpper(args[0].Bulk) == "SET") {
 			aofH.Write(value)
 		}
 

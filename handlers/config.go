@@ -31,8 +31,10 @@ func config(args []resp.Value) resp.Value {
 	subcmd := strings.ToLower(args[0].Bulk) // makes case in-sensitve
 
 	switch subcmd {
-		case "get": return getConfig(args);
-		case "set": return setConfig(args);
+	case "get":
+		return getConfig(args)
+	case "set":
+		return setConfig(args)
 	}
 	return resp.Value{Type: "error", String: "Error: Invalid subcommand for 'config' command. Only 'get' or 'set'are supported"}
 }
@@ -69,7 +71,7 @@ func setConfig(args []resp.Value) resp.Value {
 
 	value := args[2].Bulk
 
-	CONFIGMutex.RLock()	
+	CONFIGMutex.RLock()
 	CONFIG[entity] = value
 	CONFIGMutex.RUnlock()
 
