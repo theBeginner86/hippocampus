@@ -1,0 +1,15 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/thebeginner86/hippocampus/handlers
+BenchmarkHandlers-8     71346349                16.02 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     72595650                16.33 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     75599913                15.75 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     73261190                15.74 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     74557704                15.75 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     73991860                15.77 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     70868582                16.50 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     70639485                15.99 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     71337806                16.01 ns/op            0 B/op          0 allocs/op
+BenchmarkHandlers-8     73573180                15.87 ns/op            0 B/op          0 allocs/op
+PASS
+ok      github.com/thebeginner86/hippocampus/handlers   12.677s

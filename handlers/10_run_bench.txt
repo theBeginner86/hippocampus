@@ -1,0 +1,55 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/thebeginner86/hippocampus/handlers
+BenchmarkHandlers-8   	 1003611	      1220 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1151 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  995516	      1168 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1020124	      1186 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1029152	      1166 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  998913	      1168 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  961611	      1151 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1150 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1147 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1148 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1153 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1032126	      1167 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  941469	      1206 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1014489	      1196 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  997110	      1210 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  941742	      1257 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  963819	      1250 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  992078	      1210 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000000	      1261 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  979045	      1200 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  971187	      1204 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  936651	      1244 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  988932	      1562 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  944554	      1226 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  988558	      1220 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	 1000952	      1216 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  990235	      1213 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  988738	      1212 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  971066	      1226 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  991759	      1234 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  975166	      1301 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  944679	      1246 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  964404	      1244 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  962505	      1246 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  974691	      1315 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  947049	      1267 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  857121	      1329 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  951502	      1262 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  946564	      1276 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  925089	      1274 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  947174	      1276 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  941887	      1282 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  928002	      1282 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  960771	      1297 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  928908	      1302 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  928280	      1289 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  924859	      1313 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  909202	      1317 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  898938	      1313 ns/op	    4096 B/op	       1 allocs/op
+BenchmarkHandlers-8   	  886929	      1348 ns/op	    4096 B/op	       1 allocs/op
+PASS
+ok  	github.com/thebeginner86/hippocampus/handlers	79.173s

@@ -1,0 +1,43 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/thebeginner86/hippocampus/handlers
+BenchmarkHandlers-8   	   10371	    102070 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12607	    104845 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   11944	    106902 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12824	     94512 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12934	     93485 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   13008	     93846 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12697	    101444 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12807	    100183 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   11924	     97969 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12825	     96266 ns/op	  158457 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12784	     94276 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   13015	     93250 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12944	     93868 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   13038	     93355 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12910	     93320 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   13021	     93712 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12999	     93078 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12946	     93563 ns/op	  158459 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12638	    103064 ns/op	  158458 B/op	      21 allocs/op
+BenchmarkHandlers-8   	   12987	     95926 ns/op	  158459 B/op	      21 allocs/op
+PASS
+ok  	github.com/thebeginner86/hippocampus/handlers	40.196s
+
+
+goos: darwin
+goarch: arm64
+pkg: github.com/thebeginner86/hippocampus/handlers
+           │ 10_run_bench.txt │         20_run_bench.txt         │
+           │      sec/op      │   sec/op     vs base             │
+Handlers-8        4.492µ ± 3%   4.601µ ± 2%  ~ (p=0.201 n=10+20)
+
+           │ 10_run_bench.txt │          20_run_bench.txt           │
+           │       B/op       │     B/op      vs base               │
+Handlers-8       6.547Ki ± 0%   6.547Ki ± 0%  ~ (p=1.000 n=10+20) ¹
+¹ all samples are equal
+
+           │ 10_run_bench.txt │         20_run_bench.txt          │
+           │    allocs/op     │ allocs/op   vs base               │
+Handlers-8         68.00 ± 0%   68.00 ± 0%  ~ (p=1.000 n=10+20) ¹
+¹ all samples are equal

@@ -1,0 +1,6 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/thebeginner86/hippocampus/handlers
+BenchmarkHandlers-8      1003024              1197 ns/op
+PASS
+ok      github.com/thebeginner86/hippocampus/handlers   2.01
