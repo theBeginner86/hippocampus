@@ -91,6 +91,7 @@ func main() {
 		writer := resp.NewWriter(conn)
 
 		handler, ok := handlers.Handlers[command]
+		// if command == "COMMAND" {continue}  
 		if !ok {
 			fmt.Println("Invalid command: ", command)
 			writer.Write(resp.Value{Type: "string", String: ""})
