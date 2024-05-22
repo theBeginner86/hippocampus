@@ -19,7 +19,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/thebeginner86/hippocampus/handlers"
+	"github.com/thebeginner86/hippocampus/internal/handlers"
 	"github.com/thebeginner86/hippocampus/persistance/aof"
 	"github.com/thebeginner86/hippocampus/resp"
 )
