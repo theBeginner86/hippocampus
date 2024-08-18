@@ -80,7 +80,7 @@ func (aof *Aof) Close() error {
 // same RESP format that we recieve. As later on system reboot these would
 // be re-read and bring back system to its previous state, that is, the one
 // before failover
-func (aof *Aof) Write(value resp.Value) error {
+func (aof *Aof) Write(value *resp.Value) error {
 	aof.mu.Lock()
 	defer aof.mu.Unlock()
 
@@ -96,7 +96,7 @@ func (aof *Aof) Write(value resp.Value) error {
 // and then sent to func sent as args. This func should have the logic
 // to handle the specific RESP commands. It should make use of the handler map
 // that is tracks mapping between command and handling logic
-func (aof *Aof) Read(fn func(value resp.Value)) error {
+func (aof *Aof) Read(fn func(value *resp.Value)) error {
 	aof.mu.Lock()
 	defer aof.mu.Unlock()
 
