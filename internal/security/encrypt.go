@@ -21,31 +21,31 @@ import (
 )
 
 type Encrypter struct {
-  privateKey string
-  bytes []byte
+	privateKey string
+	bytes      []byte
 }
 
 func NewEncrypter(privateKey string, byts []byte) *Encrypter {
-  return &Encrypter{
-    privateKey: privateKey,
-    bytes: byts,
-  }
+	return &Encrypter{
+		privateKey: privateKey,
+		bytes:      byts,
+	}
 }
 
 func (encrypt *Encrypter) Encode(b []byte) string {
-  return base64.StdEncoding.EncodeToString(b)
+	return base64.StdEncoding.EncodeToString(b)
 }
 
 func (encrypt *Encrypter) Encrypt(text string) (string, error) {
-  block, err := aes.NewCipher([]byte(encrypt.privateKey))
-  if err != nil {
-    return "", err
-  }
-  plainText := []byte(text)
-  cfb := cipher.NewCFBEncrypter(block, encrypt.bytes)
-  cipherText := make([]byte, len(plainText))
-  cfb.XORKeyStream(cipherText, plainText)
-  return encrypt.Encode(cipherText), nil
+	block, err := aes.NewCipher([]byte(encrypt.privateKey))
+	if err != nil {
+		return "", err
+	}
+	plainText := []byte(text)
+	cfb := cipher.NewCFBEncrypter(block, encrypt.bytes)
+	cipherText := make([]byte, len(plainText))
+	cfb.XORKeyStream(cipherText, plainText)
+	return encrypt.Encode(cipherText), nil
 }
 
 // func Encrypter() {

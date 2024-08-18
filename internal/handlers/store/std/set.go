@@ -26,12 +26,12 @@ type SetCmd struct {
 
 func NewSetCmd(handler *StdStoreHandler) *SetCmd {
 	return &SetCmd{
-		Name: "SET",
+		Name:            "SET",
 		StdStoreHandler: handler,
 	}
 }
 
-func (handler *SetCmd) Handle(req *resp.Value, skp bool) (*resp.Value) {
+func (handler *SetCmd) Handle(req *resp.Value, skp bool) *resp.Value {
 	if skp {
 		return handler.run(req.Array[1:])
 	}
@@ -68,7 +68,7 @@ func (handler *SetCmd) preProcess(req *resp.Value) *resp.Value {
 	return nil
 }
 
-func (handler *SetCmd) run(args []resp.Value) *resp.Value{
+func (handler *SetCmd) run(args []resp.Value) *resp.Value {
 	key := args[0].Bulk
 	value := args[1].Bulk
 
@@ -79,7 +79,7 @@ func (handler *SetCmd) run(args []resp.Value) *resp.Value{
 	return nil
 }
 
-func (handler *SetCmd) postProcess(req *resp.Value) (*resp.Value) {
+func (handler *SetCmd) postProcess(req *resp.Value) *resp.Value {
 	err := handler.aofH.Write(req)
 	if err != nil {
 		return &resp.Value{Type: "error", String: "Error: " + err.Error()}

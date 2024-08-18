@@ -26,7 +26,7 @@ type GetCmd struct {
 
 func NewGetCmd(handler *StdStoreHandler) *GetCmd {
 	return &GetCmd{
-		Name: "GET",
+		Name:            "GET",
 		StdStoreHandler: handler,
 	}
 }
@@ -74,7 +74,7 @@ func (handler *GetCmd) postProcess(req *resp.Value) *resp.Value {
 	value, err := handler.securityH.Decrypter.Decrypt(req.Bulk)
 	if err != nil {
 		return &resp.Value{Type: "error", String: "Error: " + err.Error()}
-	}	
+	}
 
 	return &resp.Value{Type: "bulk", Bulk: value}
 }

@@ -26,15 +26,14 @@ type StdStoreHandler struct {
 	mu    sync.RWMutex
 
 	securityH *security.Security
-	aofH 	 *aof.Aof
+	aofH      *aof.Aof
 }
 
 func NewStdStoreHandler(secH *security.Security, aofH *aof.Aof) *StdStoreHandler {
 	return &StdStoreHandler{
-		store: map[string]string{},
-		mu: sync.RWMutex{},
+		store:     map[string]string{},
+		mu:        sync.RWMutex{},
 		securityH: secH,
-		aofH: aofH,
+		aofH:      aofH,
 	}
 }
-

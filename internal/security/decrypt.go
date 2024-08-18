@@ -22,13 +22,13 @@ import (
 
 type Decrypter struct {
 	privateKey string
-	bytes []byte
+	bytes      []byte
 }
 
 func NewDecrypter(privateKey string, byts []byte) *Decrypter {
 	return &Decrypter{
 		privateKey: privateKey,
-		bytes: byts,
+		bytes:      byts,
 	}
 }
 
@@ -38,7 +38,7 @@ func (decrypt *Decrypter) Decode(s string) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
-} 
+}
 
 func (decrypt *Decrypter) Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(decrypt.privateKey))

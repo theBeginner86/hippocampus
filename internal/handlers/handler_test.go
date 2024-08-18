@@ -17,8 +17,6 @@ package handlers
 // 	}
 // 	defer aofH.Close()
 
-
-
 // // set := []resp.Value{
 // // 		{Type: "bulk", Bulk: "key"},
 // // 		{Type: "bulk", Bulk: "value"},
@@ -44,4 +42,4 @@ package handlers
 // 			handler(args)
 // 		})
 // 	}
-// }	
+// }

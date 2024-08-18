@@ -25,4 +25,3 @@ func NewSecurity(privateKey string, bytes []byte) *Security {
 		Decrypter: NewDecrypter(privateKey, bytes),
 	}
 }
-

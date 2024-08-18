@@ -26,13 +26,12 @@ type HSetCmd struct {
 
 func NewHSetCmd(handler *NestedStoreHandler) *HSetCmd {
 	return &HSetCmd{
-		Name: "HSET",
+		Name:               "HSET",
 		NestedStoreHandler: handler,
 	}
 }
 
-
-func (handler *HSetCmd) Handle(req *resp.Value, skp bool) (*resp.Value) {
+func (handler *HSetCmd) Handle(req *resp.Value, skp bool) *resp.Value {
 	if skp {
 		return handler.run(req.Array[1:])
 	}
@@ -74,7 +73,7 @@ func (handler *HSetCmd) run(args []resp.Value) *resp.Value {
 	hash := args[0].Bulk
 	key := args[1].Bulk
 	value := args[2].Bulk
-	
+
 	handler.mu.Lock()
 	if _, ok := handler.store[hash]; !ok {
 		handler.store[hash] = make(map[string]string)
@@ -93,4 +92,3 @@ func (handler *HSetCmd) postProcess(req *resp.Value) *resp.Value {
 
 	return nil
 }
-

@@ -17,9 +17,9 @@ package handlers
 import (
 	"strings"
 
+	"github.com/thebeginner86/hippocampus/internal/handlers/ping"
 	"github.com/thebeginner86/hippocampus/internal/handlers/store/nested"
 	"github.com/thebeginner86/hippocampus/internal/handlers/store/std"
-	"github.com/thebeginner86/hippocampus/internal/handlers/ping"
 	"github.com/thebeginner86/hippocampus/internal/security"
 	"github.com/thebeginner86/hippocampus/persistance/aof"
 	"github.com/thebeginner86/hippocampus/resp"
@@ -28,30 +28,30 @@ import (
 type Cmds string
 
 const (
-	SET Cmds = "SET"
-	GET Cmds = "GET"
-	GETALL Cmds = "GETALL"
-	HSET Cmds = "HSET"
-	HGET Cmds = "HGET"
+	SET     Cmds = "SET"
+	GET     Cmds = "GET"
+	GETALL  Cmds = "GETALL"
+	HSET    Cmds = "HSET"
+	HGET    Cmds = "HGET"
 	HGETALL Cmds = "HGETALL"
-	CONFIG Cmds = "CONFIG"
-  PING Cmds = "PING"
+	CONFIG  Cmds = "CONFIG"
+	PING    Cmds = "PING"
 )
 
 type IStoreHandler interface {
 	Handle(req *resp.Value, skip bool) *resp.Value // TODO: skp should be removed
-	preProcess(req *resp.Value) *resp.Value 
+	preProcess(req *resp.Value) *resp.Value
 	run(args []resp.Value) *resp.Value
 	postProcess(req *resp.Value) *resp.Value
 }
 
 type CmdsHandler struct {
-	SetCmdH *std.SetCmd
-	GetCmdH *std.GetCmd
+	SetCmdH    *std.SetCmd
+	GetCmdH    *std.GetCmd
 	GetAllCmdH *std.GetAllCmd
 
-	HSetCmdH *nested.HSetCmd
-	HGetCmdH *nested.HGetCmd
+	HSetCmdH    *nested.HSetCmd
+	HGetCmdH    *nested.HGetCmd
 	HGetAllCmdH *nested.HGetAllCmd
 
 	PingCmdH *ping.PingCmd
@@ -61,42 +61,43 @@ func newCmdHandler(secH *security.Security, aofH *aof.Aof) *CmdsHandler {
 	stdH := std.NewStdStoreHandler(secH, aofH)
 	nestedH := nested.NewNestedStoreHandler(secH, aofH)
 	return &CmdsHandler{
-		SetCmdH: std.NewSetCmd(stdH),
-		GetCmdH: std.NewGetCmd(stdH),
-		GetAllCmdH: std.NewGetAllCmd(stdH),
-		HGetCmdH: nested.NewHGetCmd(nestedH),
-		HSetCmdH: nested.NewHSetCmd(nestedH),
+		SetCmdH:     std.NewSetCmd(stdH),
+		GetCmdH:     std.NewGetCmd(stdH),
+		GetAllCmdH:  std.NewGetAllCmd(stdH),
+		HGetCmdH:    nested.NewHGetCmd(nestedH),
+		HSetCmdH:    nested.NewHSetCmd(nestedH),
 		HGetAllCmdH: nested.NewHGetAllCmd(nestedH),
-		PingCmdH: ping.NewPingCmd(),
+		PingCmdH:    ping.NewPingCmd(),
 	}
 }
 
 type Handler struct {
 	CmdHander *CmdsHandler
-	AofH *aof.Aof
+	AofH      *aof.Aof
 }
 
 var byts = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
+
 const privateKey string = "abc&1*~#^2^#s0^=)^^7%b34"
 
 func NewHandler(aofFile string) (*Handler, error) {
-  aofH, err := aof.NewAof(aofFile)
+	aofH, err := aof.NewAof(aofFile)
 	if err != nil {
 		return nil, err
-	}	
+	}
 	secH := security.NewSecurity(privateKey, byts)
 
 	return &Handler{
 		CmdHander: newCmdHandler(secH, aofH),
-		AofH: aofH,
+		AofH:      aofH,
 	}, nil
 }
 
-func (handler *Handler) ExecuteCmd(req *resp.Value, skp bool) *resp.Value {	
+func (handler *Handler) ExecuteCmd(req *resp.Value, skp bool) *resp.Value {
 	// fetches the first element of the array and convert to uppercase
 	// this ensures that the cmds matches properly with our defined standards
 	cmd := strings.ToUpper(req.Array[0].Bulk)
-	req.Array[0].Bulk = cmd // TODO: please, fix this oddity 
+	req.Array[0].Bulk = cmd // TODO: please, fix this oddity
 
 	switch cmd {
 	case string(SET):

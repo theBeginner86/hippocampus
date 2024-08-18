@@ -32,7 +32,7 @@ package config
 // type ConfigSubCmd string
 
 // var (
-// 	GetCmd ConfigSubCmd = "get" 
+// 	GetCmd ConfigSubCmd = "get"
 // 	SETCmd ConfigSubCmd = "set"
 // )
 

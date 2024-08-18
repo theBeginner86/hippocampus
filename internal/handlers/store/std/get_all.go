@@ -23,10 +23,9 @@ type GetAllCmd struct {
 	*StdStoreHandler
 }
 
-
 func NewGetAllCmd(handler *StdStoreHandler) *GetAllCmd {
 	return &GetAllCmd{
-		Name: "GETALL",
+		Name:            "GETALL",
 		StdStoreHandler: handler,
 	}
 }
@@ -38,7 +37,7 @@ func (handler *GetAllCmd) Handle(req *resp.Value) *resp.Value {
 	}
 
 	res = handler.run(req.Array[1:])
-	
+
 	return handler.postProcess(res)
 }
 
@@ -70,7 +69,7 @@ func (handler *GetAllCmd) postProcess(req *resp.Value) *resp.Value {
 	for idx, val := range req.Array {
 		if idx%2 == 0 {
 			decryptedVal, err := handler.securityH.Decrypter.Decrypt(val.Bulk)
-			
+
 			// TODO: Handle error less promptly? allow some fields to be returned?
 			if err != nil {
 				return &resp.Value{Type: "error", String: "Error: " + err.Error()}

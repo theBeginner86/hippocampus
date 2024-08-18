@@ -26,14 +26,14 @@ type NestedStoreHandler struct {
 	mu    sync.RWMutex
 
 	securityH *security.Security
-	aofH 	 *aof.Aof
+	aofH      *aof.Aof
 }
 
 func NewNestedStoreHandler(secH *security.Security, aofH *aof.Aof) *NestedStoreHandler {
 	return &NestedStoreHandler{
-		store: map[string]map[string]string{},
-		mu: sync.RWMutex{},
+		store:     map[string]map[string]string{},
+		mu:        sync.RWMutex{},
 		securityH: secH,
-		aofH: aofH,
+		aofH:      aofH,
 	}
 }
