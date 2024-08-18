@@ -47,14 +47,3 @@ func (encrypt *Encrypter) Encrypt(text string) (string, error) {
 	cfb.XORKeyStream(cipherText, plainText)
 	return encrypt.Encode(cipherText), nil
 }
-
-// func Encrypter() {
-//   StringToEncrypt := "Encrypting this string"
-
-//   // To encrypt the StringToEncrypt
-//   encText, err := Encrypt(StringToEncrypt, MySecret)
-//   if err != nil {
-//     fmt.Println("error encrypting your classified text: ", err)
-//   }
-//   fmt.Println(encText)
-// }
