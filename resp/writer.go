@@ -27,7 +27,7 @@ func NewWriter(w io.Writer) *Writer {
 	return &Writer{writer: w}
 }
 
-func (w *Writer) Write(v Value) error {
+func (w *Writer) Write(v *Value) error {
 	var bytes = v.Marshal()
 	_, err := w.writer.Write(bytes)
 	if err != nil {
@@ -37,7 +37,7 @@ func (w *Writer) Write(v Value) error {
 }
 
 // Marshal() is responsible for delegating the serialization based on value type
-func (v Value) Marshal() []byte {
+func (v *Value) Marshal() []byte {
 	switch v.Type {
 	case "array":
 		return v.marshalArray()
@@ -55,7 +55,7 @@ func (v Value) Marshal() []byte {
 }
 
 // marshalString() responsible for serializing string value
-func (v Value) marshalString() []byte {
+func (v *Value) marshalString() []byte {
 	var bytes []byte
 	bytes = append(bytes, STRING)
 	bytes = append(bytes, v.String...)
@@ -65,7 +65,7 @@ func (v Value) marshalString() []byte {
 }
 
 // marshalBulk() responsible for serializing bulk value
-func (v Value) marshalBulk() []byte {
+func (v *Value) marshalBulk() []byte {
 	var bytes []byte
 	bytes = append(bytes, BULK)
 	bytes = append(bytes, strconv.Itoa(len(v.Bulk))...)
@@ -77,7 +77,7 @@ func (v Value) marshalBulk() []byte {
 }
 
 // marshalArray() responsible for serializing array value
-func (v Value) marshalArray() []byte {
+func (v *Value) marshalArray() []byte {
 	len := len(v.Array)
 	var bytes []byte
 	bytes = append(bytes, ARRAY)
@@ -92,7 +92,7 @@ func (v Value) marshalArray() []byte {
 }
 
 // marshalInteger() responsible for serializing integer value
-func (v Value) marshalError() []byte {
+func (v *Value) marshalError() []byte {
 	var bytes []byte
 	bytes = append(bytes, ERROR)
 	bytes = append(bytes, v.String...)
@@ -102,6 +102,6 @@ func (v Value) marshalError() []byte {
 }
 
 // marshalNull() responsible for serializing null value
-func (v Value) marshalNull() []byte {
+func (v *Value) marshalNull() []byte {
 	return []byte("$-1\r\n")
 }

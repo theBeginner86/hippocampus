@@ -55,13 +55,13 @@ func (r *Resp) readInteger() (integer int, length int, err error) {
 	return int(i64), n, nil
 }
 
-func (r *Resp) readBulk() (Value, error) {
+func (r *Resp) readBulk() (*Value, error) {
 	val := Value{
 		Type: "bulk",
 	}
 	len, _, err := r.readInteger()
 	if err != nil {
-		return val, err
+		return &val, err
 	}
 	bulk := make([]byte, len)
 	r.reader.Read(bulk)
@@ -69,18 +69,18 @@ func (r *Resp) readBulk() (Value, error) {
 
 	r.readLine() // read trailing CRLF
 
-	return val, nil
+	return &val, nil
 }
 
 // readArray() is the handler for reading an array from the reader
-func (r *Resp) readArray() (Value, error) {
+func (r *Resp) readArray() (*Value, error) {
 	val := Value{
 		Type: "array",
 	}
 
 	len, _, err := r.readInteger()
 	if err != nil {
-		return val, err
+		return &val, err
 	}
 	arr := make([]Value, 0)
 	for i := 0; i < len; i++ {
@@ -88,18 +88,18 @@ func (r *Resp) readArray() (Value, error) {
 		if err != nil {
 			return val, err
 		}
-		arr = append(arr, val)
+		arr = append(arr, *val)
 	}
 	val.Array = arr
-	return val, nil
+	return &val, nil
 }
 
 // Read() is an entry point to read a RESP value
 // based on the type it delegates the requests to the requested handler
-func (r *Resp) Read() (Value, error) {
+func (r *Resp) Read() (*Value, error) {
 	typ, err := r.reader.ReadByte()
 	if err != nil {
-		return Value{}, err
+		return &Value{}, err
 	}
 
 	switch typ {
@@ -109,7 +109,7 @@ func (r *Resp) Read() (Value, error) {
 		return r.readBulk()
 	default:
 		fmt.Printf("Unkown type: %v", string(typ))
-		return Value{}, nil
+		return &Value{}, nil
 	}
 
 }
