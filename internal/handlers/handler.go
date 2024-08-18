@@ -39,7 +39,7 @@ const (
 )
 
 type IStoreHandler interface {
-	Handle(req *resp.Value) *resp.Value 
+	Handle(req *resp.Value, skip bool) *resp.Value // TODO: skp should be removed
 	preProcess(req *resp.Value) *resp.Value 
 	run(args []resp.Value) *resp.Value
 	postProcess(req *resp.Value) *resp.Value
@@ -83,9 +83,7 @@ func NewHandler(aofFile string) (*Handler, error) {
   aofH, err := aof.NewAof(aofFile)
 	if err != nil {
 		return nil, err
-	}
-	defer aofH.Close()
-	
+	}	
 	secH := security.NewSecurity(privateKey, byts)
 
 	return &Handler{
@@ -94,20 +92,21 @@ func NewHandler(aofFile string) (*Handler, error) {
 	}, nil
 }
 
-func (handler *Handler) ExecuteCmd(req *resp.Value) *resp.Value {	
+func (handler *Handler) ExecuteCmd(req *resp.Value, skp bool) *resp.Value {	
 	// fetches the first element of the array and convert to uppercase
 	// this ensures that the cmds matches properly with our defined standards
 	cmd := strings.ToUpper(req.Array[0].Bulk)
+	req.Array[0].Bulk = cmd // TODO: please, fix this oddity 
 
 	switch cmd {
 	case string(SET):
-		return handler.CmdHander.SetCmdH.Handle(req)
+		return handler.CmdHander.SetCmdH.Handle(req, skp)
 	case string(GET):
 		return handler.CmdHander.GetCmdH.Handle(req)
 	case string(GETALL):
 		return handler.CmdHander.GetAllCmdH.Handle(req)
 	case string(HSET):
-		return handler.CmdHander.HSetCmdH.Handle(req)
+		return handler.CmdHander.HSetCmdH.Handle(req, skp)
 	case string(HGET):
 		return handler.CmdHander.HGetCmdH.Handle(req)
 	case string(HGETALL):

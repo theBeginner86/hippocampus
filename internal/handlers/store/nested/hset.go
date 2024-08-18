@@ -31,7 +31,12 @@ func NewHSetCmd(handler *NestedStoreHandler) *HSetCmd {
 	}
 }
 
-func (handler *HSetCmd) Handle(req *resp.Value) *resp.Value {
+
+func (handler *HSetCmd) Handle(req *resp.Value, skp bool) (*resp.Value) {
+	if skp {
+		return handler.run(req.Array[1:])
+	}
+	
 	res := handler.preProcess(req)
 	if res != nil && res.Type != "error" {
 		return res

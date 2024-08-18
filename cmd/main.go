@@ -40,11 +40,19 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	defer handlerInst.AofH.Close()
 
-	handlerInst.AofH.Read(func(value *resp.Value) {
-		handlerInst.ExecuteCmd(value)
+	err = handlerInst.AofH.Read(func(value *resp.Value) {
+		resp := handlerInst.ExecuteCmd(value, true)
+		if resp != nil && resp.Type == "error" {
+			return
+		}
 	})
-	
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	// Listen for connections
 	conn, err := l.Accept()
@@ -74,7 +82,7 @@ func main() {
 
 		writer := resp.NewWriter(conn)
 
-		resp := handlerInst.ExecuteCmd(req)
+		resp := handlerInst.ExecuteCmd(req, false)
 		writer.Write(resp)
 	}
 }
