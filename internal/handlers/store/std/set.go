@@ -37,14 +37,14 @@ func (handler *SetCmd) Handle(req *resp.Value, skp bool) (*resp.Value) {
 	}
 
 	res := handler.preProcess(req)
-	if res != nil && res.Type != "error" {
+	if res != nil && res.Type == "error" {
 		return res
 	}
 
 	handler.run(req.Array[1:])
 
 	res = handler.postProcess(req)
-	if res != nil && res.Type != "error" {
+	if res != nil && res.Type == "error" {
 		return res
 	}
 

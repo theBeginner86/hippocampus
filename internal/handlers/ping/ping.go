@@ -30,7 +30,7 @@ func NewPingCmd() *PingCmd {
 
 func (handler *PingCmd) Handle(req *resp.Value) *resp.Value {
 	res := handler.preProcess(req)
-	if res != nil && res.Type != "error" {
+	if res != nil && res.Type == "error" {
 		return res
 	}
 	res = handler.run(req.Array[1:])

@@ -19,7 +19,7 @@ func NewGetAllCmd(handler *StdStoreHandler) *GetAllCmd {
 
 func (handler *GetAllCmd) Handle(req *resp.Value) *resp.Value {
 	res := handler.preProcess(req)
-	if res != nil && res.Type != "error" {
+	if res != nil && res.Type == "error" {
 		return res
 	}
 
