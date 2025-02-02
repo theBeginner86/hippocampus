@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- hippo_v1alpha1_hippocampus.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

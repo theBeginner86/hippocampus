@@ -1,0 +1,23 @@
+# permissions for end users to view hippocampuses.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: hippocampus-viewer-role
+rules:
+- apiGroups:
+  - hippo.hippocampus.com
+  resources:
+  - hippocampuses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - hippo.hippocampus.com
+  resources:
+  - hippocampuses/status
+  verbs:
+  - get
