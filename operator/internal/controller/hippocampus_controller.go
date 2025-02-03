@@ -39,7 +39,7 @@ import (
 	hippov1alpha1 "github.com/thebeginner86/hippocampus/api/v1alpha1"
 )
 
-const memcachedFinalizer = "hippo.hippocampus.com/finalizer"
+const hippocampusFinalizer = "hippo.hippocampus.com/finalizer"
 
 // Definitions to manage status conditions
 const (
@@ -113,9 +113,9 @@ func (r *HippocampusReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// Let's add a finalizer. Then, we can define some operations which should
 	// occur before the custom resource is deleted.
 	// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers
-	if !controllerutil.ContainsFinalizer(hippocampus, memcachedFinalizer) {
+	if !controllerutil.ContainsFinalizer(hippocampus, hippocampusFinalizer) {
 		log.Info("Adding Finalizer for hippocampus")
-		if ok := controllerutil.AddFinalizer(hippocampus, memcachedFinalizer); !ok {
+		if ok := controllerutil.AddFinalizer(hippocampus, hippocampusFinalizer); !ok {
 			log.Error(err, "Failed to add finalizer into the custom resource")
 			return ctrl.Result{Requeue: true}, nil
 		}
@@ -130,7 +130,7 @@ func (r *HippocampusReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// indicated by the deletion timestamp being set.
 	isHippocampusMarkedToBeDeleted := hippocampus.GetDeletionTimestamp() != nil
 	if isHippocampusMarkedToBeDeleted {
-		if controllerutil.ContainsFinalizer(hippocampus, memcachedFinalizer) {
+		if controllerutil.ContainsFinalizer(hippocampus, hippocampusFinalizer) {
 			log.Info("Performing Finalizer Operations for hippocampus before delete CR")
 
 			// Let's add here a status "Downgrade" to reflect that this resource began its process to be terminated.
@@ -170,7 +170,7 @@ func (r *HippocampusReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			}
 
 			log.Info("Removing Finalizer for hippocampus after successfully perform the operations")
-			if ok := controllerutil.RemoveFinalizer(hippocampus, memcachedFinalizer); !ok {
+			if ok := controllerutil.RemoveFinalizer(hippocampus, hippocampusFinalizer); !ok {
 				log.Error(err, "Failed to remove finalizer for hippocampus")
 				return ctrl.Result{Requeue: true}, nil
 			}
@@ -389,7 +389,6 @@ func (r *HippocampusReconciler) deploymentForHippocampus(
 							ContainerPort: hippocampus.Spec.ContainerPort,
 							Name:          "hippocampus",
 						}},
-						Command: []string{"hippocampus", "-m=64", "-o", "modern", "-v"},
 					}},
 				},
 			},
@@ -412,19 +411,21 @@ func labelsForHippocampus(name string) map[string]string {
 	if err == nil {
 		imageTag = strings.Split(image, ":")[1]
 	}
-	return map[string]string{"app.kubernetes.io/name": "hippocampus-operator",
+	return map[string]string{
+		"app.kubernetes.io/name":       "hippocampus-operator",
 		"app.kubernetes.io/version":    imageTag,
 		"app.kubernetes.io/managed-by": "HippocampusController",
+		"app.kubernetes.io/instance":   name,
 	}
 }
 
 // imageForHippocampus gets the Operand image which is managed by this controller
 // from the MEMCACHED_IMAGE environment variable defined in the config/manager/manager.yaml
 func imageForHippocampus() (string, error) {
-	var imageEnvVar = "MEMCACHED_IMAGE"
+	var imageEnvVar = "HIPPOCAMPUS_IMAGE"
 	image, found := os.LookupEnv(imageEnvVar)
 	if !found {
-		return "", fmt.Errorf("Unable to find %s environment variable with the image", imageEnvVar)
+		return "", fmt.Errorf("unable to find %s environment variable with the image", imageEnvVar)
 	}
 	return image, nil
 }

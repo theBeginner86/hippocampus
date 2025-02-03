@@ -46,7 +46,7 @@ spec:
                 type: integer
               private_key:
                 description: PrivateKey is the private key of the Hippocampus server.
-                  Used for secure communication between server and client.
+                  Used for secure communication between server and clients.
                 type: string
               size:
                 description: Size defines the number of Memcached instances

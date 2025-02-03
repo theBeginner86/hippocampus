@@ -25,7 +25,7 @@ type HippocampusSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// PrivateKey is the private key of the Hippocampus server. Used for secure communication between server and client.
+	// PrivateKey is the private key of the Hippocampus server. Used for secure communication between server and clients.
 	PrivateKey string `json:"private_key,omitempty"`
 
 	// The following markers will use OpenAPI v3 schema to validate the value
