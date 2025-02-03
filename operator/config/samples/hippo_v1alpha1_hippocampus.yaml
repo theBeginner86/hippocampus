@@ -5,5 +5,7 @@ metadata:
     app.kubernetes.io/name: operator
     app.kubernetes.io/managed-by: kustomize
   name: hippocampus-sample
+  # namespace: hippocampus
 spec:
-  # TODO(user): Add fields here
+  size: 3
+  containerPort: 6379

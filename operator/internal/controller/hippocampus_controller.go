@@ -59,6 +59,9 @@ type HippocampusReconciler struct {
 // +kubebuilder:rbac:groups=hippo.hippocampus.com,resources=hippocampuses,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=hippo.hippocampus.com,resources=hippocampuses/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=hippo.hippocampus.com,resources=hippocampuses/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core,resources=events,verbs=create;patch
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

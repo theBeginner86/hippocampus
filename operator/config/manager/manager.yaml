@@ -67,7 +67,7 @@ spec:
         name: manager
         env:
         - name: HIPPOCAMPUS_IMAGE
-          value: thebeginner86/hippocampus:latest
+          value: thebeginner86/hippocampus-operator:latest
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
