@@ -1,15 +1,14 @@
-{{- if ne .Values.mode "cluster" }}
+{{- if eq .Values.mode "cluster" }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "hippocampus.fullname" . }}
   labels:
     {{- include "hippocampus.labels" . | nindent 4 }}
-    mode: single
+    mode: cluster
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  serviceName: {{ .Values.headlessService.name }}
+  replicas: {{ .Values.cluster.replicas }}
   selector:
     matchLabels:
       {{- include "hippocampus.selectorLabels" . | nindent 6 }}
@@ -42,17 +41,34 @@ spec:
             - name: redis
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            - name: raft-rpc
+              containerPort: {{ .Values.raft.rpcPort }}
+              protocol: TCP
           env:
             - name: HIPPOCAMPUS_MODE
-              value: "single"
+              value: "cluster"
             - name: HIPPOCAMPUS_PORT
               value: "{{ .Values.service.port }}"
             - name: HIPPOCAMPUS_NODE_ID
-              value: "{{ include "hippocampus.fullname" . }}"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: HIPPOCAMPUS_DATA_DIR
               value: "{{ .Values.server.dataDir }}"
             - name: RAFT_ENABLED
               value: "{{ .Values.raft.enabled }}"
+            - name: RAFT_RPC_PORT
+              value: "{{ .Values.raft.rpcPort }}"
+            - name: RAFT_MIN_ELECTION_TIMEOUT
+              value: "{{ .Values.raft.minElectionTimeout }}"
+            - name: RAFT_MAX_ELECTION_TIMEOUT
+              value: "{{ .Values.raft.maxElectionTimeout }}"
+            - name: RAFT_HEARTBEAT_INTERVAL
+              value: "{{ .Values.raft.heartbeatInterval }}"
+            - name: CLUSTER_SERVICE_NAME
+              value: "{{ .Values.headlessService.name }}"
+            - name: CLUSTER_PEERS
+              value: {{ include "hippocampus.clusterPeers" . | quote }}
             - name: STORAGE_AOF_FILE
               value: "{{ .Values.storage.aofFile }}"
             - name: STORAGE_ENABLE_AOF
@@ -61,14 +77,14 @@ spec:
           livenessProbe:
             tcpSocket:
               port: redis
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 10
           {{- end }}
           {{- if .Values.probe.readinessProbe.enabled }}
           readinessProbe:
             tcpSocket:
               port: redis
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 5
           {{- end }}
           resources:
@@ -77,10 +93,6 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -93,4 +105,14 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- with .Values.volumes }}
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi
+  {{- end }}
 {{- end }}

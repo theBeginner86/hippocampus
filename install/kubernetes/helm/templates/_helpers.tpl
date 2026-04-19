@@ -60,3 +60,20 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate cluster peers list for RAFT
+Format: "node-0:service-0.headless:7000:6379,node-1:service-1.headless:7000:6379"
+*/}}
+{{- define "hippocampus.clusterPeers" -}}
+{{- $replicas := .Values.cluster.replicas | int }}
+{{- $name := include "hippocampus.fullname" . }}
+{{- $headless := .Values.headlessService.name }}
+{{- $rpcPort := .Values.raft.rpcPort }}
+{{- $dataPort := .Values.service.port }}
+{{- range $i := until $replicas }}
+{{- if gt $i 0 }},{{- end }}
+{{- printf "%s-%d:%s-%d.%s:%s:%s" $name $i $name $i $headless $rpcPort $dataPort }}
+{{- end }}
+{{- end }}
+

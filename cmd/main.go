@@ -17,49 +17,108 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/thebeginner86/hippocampus/internal/config"
+	"github.com/thebeginner86/hippocampus/internal/consensus/cluster"
 	"github.com/thebeginner86/hippocampus/internal/handlers"
 	"github.com/thebeginner86/hippocampus/resp"
 )
 
-var (
-	databaseFile = "database.aof"
-)
-
 func main() {
-	fmt.Println("Listening on port :6379")
-
-	l, err := net.Listen("tcp", ":6379")
+	// Load configuration
+	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Printf("Failed to load configuration: %v\n", err)
+		os.Exit(1)
 	}
 
-	handlerInst, err := handlers.NewHandler(databaseFile)
+	fmt.Printf("Starting Hippocampus: %s\n", cfg)
+
+	// Create necessary directories
+	if err := os.MkdirAll(cfg.Storage.DataDir, 0755); err != nil {
+		fmt.Printf("Failed to create data directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Initialize handler with AOF storage
+	handlerInst, err := handlers.NewHandler(cfg.Storage.AofFile)
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Printf("Failed to initialize handler: %v\n", err)
+		os.Exit(1)
 	}
 	defer handlerInst.AofH.Close()
 
+	// Replay AOF
 	err = handlerInst.AofH.Read(func(value *resp.Value) {
 		resp := handlerInst.ExecuteCmd(value, true)
 		if resp != nil && resp.Type == "error" {
 			return
 		}
 	})
-
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Printf("Failed to replay AOF: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Listen for connections
-	conn, err := l.Accept()
-	if err != nil {
-		fmt.Println(err)
-		return
+	var raftCluster *cluster.Cluster
+
+	// Initialize RAFT cluster if enabled
+	if cfg.IsClusterMode() && cfg.RAFT.Enabled {
+		fmt.Printf("Initializing RAFT cluster mode with %d peers\n", len(cfg.Cluster.Peers))
+		raftCluster = initializeRaftCluster(cfg)
+		if err := raftCluster.Start(); err != nil {
+			fmt.Printf("Failed to start RAFT cluster: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("[RAFT] Cluster started for node %s\n", cfg.NodeID)
+	} else {
+		fmt.Println("Running in single-node mode (no RAFT clustering)")
 	}
+
+	// Setup signal handler for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Start TCP server
+	fmt.Printf("Listening on port :%s\n", cfg.Port)
+	listener, err := net.Listen("tcp", ":"+cfg.Port)
+	if err != nil {
+		fmt.Printf("Failed to listen: %v\n", err)
+		os.Exit(1)
+	}
+	defer listener.Close()
+
+	// Graceful shutdown handling
+	go func() {
+		<-sigChan
+		fmt.Println("\nShutting down...")
+		listener.Close()
+		if raftCluster != nil {
+			if err := raftCluster.Stop(); err != nil {
+				fmt.Printf("Error stopping RAFT cluster: %v\n", err)
+			}
+		}
+		handlerInst.AofH.Close()
+		os.Exit(0)
+	}()
+
+	// Accept connections
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Printf("Accept error: %v\n", err)
+			continue
+		}
+
+		go handleConnection(conn, handlerInst, raftCluster, cfg)
+	}
+}
+
+// handleConnection handles a single client connection
+func handleConnection(conn net.Conn, handlerInst *handlers.Handler, raftCluster *cluster.Cluster, cfg *config.Config) {
 	defer conn.Close()
 
 	for {
@@ -69,20 +128,73 @@ func main() {
 			return
 		}
 
-		// this validaiton ensures that the request includes an array and not empty
-		if req.Type != "array" {
-			fmt.Println("Invalid request, expected array")
+		if req.Type != "array" || len(req.Array) == 0 {
 			continue
 		}
 
-		if len(req.Array) == 0 {
-			fmt.Println("Invalid request, empty array")
-			continue
+		// Check if operation should be replicated (RAFT cluster)
+		isWriteOp := isWriteCommand(req.Array[0].Bulk)
+		if isWriteOp && raftCluster != nil && cfg.IsClusterMode() {
+			handleClusteredWrite(conn, req, handlerInst, raftCluster)
+		} else {
+			handleLocalWrite(conn, req, handlerInst)
 		}
-
-		writer := resp.NewWriter(conn)
-
-		resp := handlerInst.ExecuteCmd(req, false)
-		writer.Write(resp)
 	}
+}
+
+// handleLocalWrite handles write in single-node mode
+func handleLocalWrite(conn net.Conn, req *resp.Value, handlerInst *handlers.Handler) {
+	writer := resp.NewWriter(conn)
+	response := handlerInst.ExecuteCmd(req, false)
+	writer.Write(response)
+}
+
+// handleClusteredWrite handles write in RAFT cluster mode
+func handleClusteredWrite(conn net.Conn, req *resp.Value, handlerInst *handlers.Handler, raftCluster *cluster.Cluster) {
+	writer := resp.NewWriter(conn)
+
+	// If not leader, return error to redirect to leader
+	if !raftCluster.IsLeader() {
+		leader := raftCluster.GetLeader()
+		if leader == "" {
+			response := &resp.Value{Type: "error", Bulk: "ERR no leader elected"}
+			writer.Write(response)
+		} else {
+			response := &resp.Value{Type: "error", Bulk: fmt.Sprintf("ERR redirect to leader: %s", leader)}
+			writer.Write(response)
+		}
+		return
+	}
+
+	// Execute locally and it will be replicated via RAFT
+	response := handlerInst.ExecuteCmd(req, false)
+	writer.Write(response)
+}
+
+// isWriteCommand checks if a command is a write operation
+func isWriteCommand(cmd string) bool {
+	writeCommands := map[string]bool{
+		"SET":      true,
+		"HSET":     true,
+		"DEL":      true,
+		"FLUSHDB":  true,
+		"FLUSHALL": true,
+	}
+	return writeCommands[cmd]
+}
+
+// initializeRaftCluster initializes the RAFT cluster
+func initializeRaftCluster(cfg *config.Config) *cluster.Cluster {
+	// Convert PeerConfig to cluster.Peer
+	peers := make(map[string]cluster.Peer)
+	for _, p := range cfg.Cluster.Peers {
+		peers[p.NodeID] = cluster.Peer{
+			ID:      p.NodeID,
+			Address: p.Host,
+		}
+	}
+
+	// Create cluster instance
+	raftCluster := cluster.NewCluster(cfg.NodeID, peers, cfg.RAFT.RpcPort)
+	return raftCluster
 }

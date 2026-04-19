@@ -1,0 +1,21 @@
+{{- if eq .Values.mode "cluster" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.headlessService.name }}
+  labels:
+    {{- include "hippocampus.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    {{- include "hippocampus.selectorLabels" . | nindent 4 }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: redis
+      protocol: TCP
+      name: redis
+    - port: {{ .Values.raft.rpcPort }}
+      targetPort: raft-rpc
+      protocol: TCP
+      name: raft-rpc
+{{- end }}

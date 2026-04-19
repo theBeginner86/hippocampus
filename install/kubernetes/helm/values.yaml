@@ -2,6 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Server mode: single or cluster
+mode: single
+
+# Replica count (used for single mode)
 replicaCount: 1
 
 image:
@@ -28,8 +32,7 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: {} # fsGroup: 2000
 
 securityContext: {}
   # capabilities:
@@ -39,60 +42,88 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# Service configuration
 service:
   type: LoadBalancer
   port: 6379
-  targerPort: 6379
+  targetPort: 6379
   annotations: {}
+
+# Headless service for StatefulSet (used in cluster mode)
+headlessService:
+  enabled: false
+  name: hippocampus-cluster
+  clusterIP: None
 
 ingress:
   enabled: false
   className: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: hippocampus.local
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #   cpu: 500m
+  #   memory: 512Mi
   # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #   cpu: 250m
+  #   memory: 256Mi
 
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 50
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
+# Volume configuration for persistent storage
 volumes:
-- name: storage
-  hostPath: # path on the host of k8s node
-    path: "/mnt/hippocampus/database.aof" # change this based on preference
+  - name: storage
+    emptyDir: {}
+    # For production, use persistentVolumeClaim:
+    # persistentVolumeClaim:
+    #   claimName: hippocampus-pvc
 
-# Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-- name: storage
-  mountPath: "/app/cmd/database.aof" # TODO: change it to hidden folder
-  readOnly: false
+  - name: storage
+    mountPath: /data
+    readOnly: false
 
-# For health check
+# Server configuration
+server:
+  port: "6379"
+  dataDir: "/data"
+
+# RAFT configuration
+raft:
+  enabled: true
+  rpcPort: "7000"
+  minElectionTimeout: 150
+  maxElectionTimeout: 300
+  heartbeatInterval: 50
+  snapshotInterval: 100000
+  maxLogSize: 1000000
+
+# Cluster configuration (when mode: cluster)
+cluster:
+  enabled: false
+  # Number of replicas in cluster mode
+  replicas: 3
+  # Peer configuration (auto-generated from replicas)
+  # Format: "node-0:hippocampus-cluster-0.hippocampus-cluster:7000:6379,node-1:hippocampus-cluster-1.hippocampus-cluster:7000:6379"
+
+  # Storage configuration
+storage:
+  aofFile: "/data/database.aof"
+  snapshotDir: "/data/snapshots"
+  enableAof: true
+  aofFsyncPolicy: "everysec" # always, everysec, no
+
+# Health check probes
 probe:
   livenessProbe:
     enabled: false
